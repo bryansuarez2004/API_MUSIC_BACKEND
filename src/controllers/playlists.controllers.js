@@ -1,6 +1,7 @@
 const catchError = require('../utils/catchError');
 const Playlist = require('../models/Playlist');
 const Track = require('../models/Track');
+const { createTrack } = require('./track.controllers');
 
 const getAll = catchError(async(req, res) => {
     const results = await Playlist.findAll({include:[Track]});
@@ -13,9 +14,23 @@ const createPlaylist = catchError(async(req,res)=>{
 
    if(tracks.length === 0) return  res.json({error:'debe haber almenos una cancion para crear una playlist'})
 
-  console.log(tracks);
-   const result = await Playlist.create({name,userId:idUser});
-  res.json(result)
+    const playlist = await Playlist.create({name,userId:idUser});
+
+   const TracksOfPlaylist = await Promise.all(
+    tracks.map(async (track) => {
+      const result = await createTrack(track);
+      return result;
+    })
+  );
+
+  const idsOfTracks = TracksOfPlaylist.map((track)=>{
+  return track.id
+  })
+
+  await playlist.setTracks(idsOfTracks)
+
+
+  res.json(playlist)
 
 })
 
