@@ -3,6 +3,9 @@ const User = require('../models/User');
 const Playlist = require('../models/Playlist');
 const Track = require('../models/Track');
 const { createTrack } = require('./track.controllers');
+const { getTrackByIdSpotify } = require('../services/tracks');
+const { default: axios } = require('axios');
+const { getConfig } = require('../utils/configSpotyApi');
 
 const getAll = catchError(async(req, res) => {
     const results = await User.findAll({include:[Playlist,Track]});
@@ -44,16 +47,61 @@ const addFavoriteTracks = catchError(async(req,res)=>{
     const {id,spotifyId}=req.params
  
     const user = await User.findByPk(id)
+    if(!user) return res.status(404).json({ error: "usuario no encontrado" })
  
     const track = await createTrack(spotifyId)
 
 
     await user.addTracks([track.id])
     
+    const newTrack = await   getTrackByIdSpotify(track.spotifyId)    
+ 
+    return res.json(newTrack)
+ 
+ })
+
+ const removeFavoriteTracks = catchError(async(req,res)=>{
+    const {id,spotifyId}=req.params
+
+    const user = await User.findByPk(id)
+    if(!user) return res.status(404).json({ error: "usuario no encontrado" })
+  
+    const trackToRemove = await Track.findOne({where:{spotifyId}})
+
+    await user.removeTracks([trackToRemove.id])
+
+    res.json(trackToRemove)
+
+
+ })
+
+
+ const getFavoritesTracks = catchError(async(req,res)=>{
+    const {id}=req.params
+ 
+    const user = await User.findByPk(id)
+    if(!user) return res.status(404).json({ error: "usuario no encontrado" })
+
     const tracks = await user.getTracks()
- 
-    return res.json(tracks)
- 
+    if (tracks.length === 0) res.json([])
+
+
+    const spotifyIds = tracks.map((track)=>{
+        return track.spotifyId
+    }).join(",");
+
+    const config = await getConfig();
+
+    const { data } = await axios.get(
+        `https://api.spotify.com/v1/tracks?ids=${spotifyIds}`,
+        config
+      );
+
+
+    res.json(data.tracks)
+   
+
+
  })
 
 module.exports = {
@@ -62,5 +110,7 @@ module.exports = {
     getOne,
     remove,
     update,
-    addFavoriteTracks
+    addFavoriteTracks,
+    removeFavoriteTracks,
+    getFavoritesTracks
 }

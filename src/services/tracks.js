@@ -38,9 +38,8 @@ const searchTracks = async (req, res) => {
   }
 };
 
-const getTrackByIdSpotify = async (req, res) => {
+const getTrackByIdSpotify = async (idSpotify) => {
   try {
-    const { idSpotify } = req.params;
 
     const config = await getConfig();
 
@@ -49,7 +48,7 @@ const getTrackByIdSpotify = async (req, res) => {
       config
     );
 
-    return res.json(data);
+    return data
 
 
   } catch (err) {
