@@ -2,10 +2,18 @@ const catchError = require('../utils/catchError');
 const Track = require('../models/Track');
 
 
-const getPrincipalTracks = catchError(async(req, res) => {
-    
-});
+const createTrack = async(spotifyId) => {
+    const [newTrack] = await Track.findOrCreate({
+        where: { spotifyId },
+        defaults: {
+          spotifyId,
+          
+        },
+      });
+      console.log(newTrack.dataValues);
+      return newTrack
+};
 
 module.exports = {
-    getPrincipalTracks
+    createTrack
 }

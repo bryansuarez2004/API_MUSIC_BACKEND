@@ -10,6 +10,10 @@ trackRouter.route('/search')
     .post(searchTracks)    
 
 trackRouter.route('/:idSpotify')  
-    .get(getTrackByIdSpotify)  
+    .get(getTrackByIdSpotify) 
+    
+
+
+    
 
 module.exports = trackRouter;

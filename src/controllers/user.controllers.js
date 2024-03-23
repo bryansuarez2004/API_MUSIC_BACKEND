@@ -1,8 +1,11 @@
 const catchError = require('../utils/catchError');
 const User = require('../models/User');
+const Playlist = require('../models/Playlist');
+const Track = require('../models/Track');
+const { createTrack } = require('./track.controllers');
 
 const getAll = catchError(async(req, res) => {
-    const results = await User.findAll();
+    const results = await User.findAll({include:[Playlist,Track]});
     return res.json(results);
 });
 
@@ -35,10 +38,29 @@ const update = catchError(async(req, res) => {
     return res.json(result[1][0]);
 });
 
+
+const addFavoriteTracks = catchError(async(req,res)=>{
+
+    const {id,spotifyId}=req.params
+ 
+    const user = await User.findByPk(id)
+ 
+    const track = await createTrack(spotifyId)
+
+
+    await user.addTracks([track.id])
+    
+    const tracks = await user.getTracks()
+ 
+    return res.json(tracks)
+ 
+ })
+
 module.exports = {
     getAll,
     create,
     getOne,
     remove,
-    update
+    update,
+    addFavoriteTracks
 }
