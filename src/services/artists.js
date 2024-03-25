@@ -36,5 +36,26 @@ const getArtistByIdSpotify = async (req, res) => {
       return res.json(err)
     }
   };
+
+
+
   
-  module.exports = { getArtistByIdSpotify};
+  const getTopArtist =async (req, res) => {
+    try {
+
+        const config = await getConfig();
+
+        const { data: topArtist} = await axios.get(
+          `https://api.spotify.com/v1/search?q=${encodeURIComponent(`genre:reggaeton`)}&type=artist&limit=15`,
+            config
+          );   
+    
+        return res.status(200).json(topArtist.artists.items);
+
+  
+    } catch (err) {
+      return res.json(err)
+    }
+  };
+  
+  module.exports = { getArtistByIdSpotify,getTopArtist};
