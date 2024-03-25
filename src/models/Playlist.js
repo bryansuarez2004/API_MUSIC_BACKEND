@@ -6,6 +6,10 @@ const Playlist = sequelize.define('playlist', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    shared: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false
+    },
 },{
     timestamps: false
   });

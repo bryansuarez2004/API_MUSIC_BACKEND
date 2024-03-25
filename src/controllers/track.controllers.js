@@ -11,7 +11,8 @@ const createTrack = async(spotifyId) => {
           
         },
       });
-      console.log(newTrack.dataValues);
+
+      
       return newTrack
 };
 

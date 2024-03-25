@@ -1,23 +1,32 @@
-const { getAll,create, addFavoriteTracks, removeFavoriteTracks, getFavoritesTracks } = require('../controllers/user.controllers');
+const { getAll,create, addFavoriteTracks, removeFavoriteTracks, getFavoritesTracks, login } = require('../controllers/user.controllers');
 const express = require('express');
+const { verifyJWT } = require('../utils/verifyJWT');
 
 const userRouter = express.Router();
 
 userRouter.route('/')
-    .get(getAll)
+    .get(verifyJWT, getAll)
 
 userRouter.route('/register')    
     .post(create);
+ 
+userRouter.route('/login') 
+    .post(login)   
 
-userRouter.route('/:id/favoriteTracks')
-    .get(getFavoritesTracks)    
+userRouter.route('/favoriteTracks')
+    .get(verifyJWT, getFavoritesTracks)       
 
-userRouter.route('/:id/addTracks/:spotifyId')
-    .post(addFavoriteTracks)
+
+userRouter.route('/addTracks/:spotifyId')
+    .post(verifyJWT, addFavoriteTracks)
  
 
-userRouter.route('/:id/removeTracks/:spotifyId')
-    .post(removeFavoriteTracks)
+userRouter.route('/removeTracks/:spotifyId')
+    .delete(verifyJWT, removeFavoriteTracks)
+
+
+
+
 
 
 

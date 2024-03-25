@@ -3,6 +3,7 @@ const trackRouter = require('./track.router');
 const playlistRouter = require('./playlist.router');
 const userRouter = require('./user.router');
 const artistRouter = require('./artist.router');
+const { verifyJWT } = require('../utils/verifyJWT');
 const router = express.Router();
 
 // colocar las rutas aquí

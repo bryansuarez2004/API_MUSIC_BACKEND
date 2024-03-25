@@ -1,18 +1,27 @@
 const express = require('express');
-const { getAll, createPlaylist, removePlaylist, getPlaylistWithTracks } = require('../controllers/playlists.controllers');
+const { getAll, createPlaylist, removePlaylist, getPlaylistWithTracks, getPlaylistShared, playlistToShared } = require('../controllers/playlists.controllers');
+const { verifyJWT } = require('../utils/verifyJWT');
 
 const playlistRouter = express.Router();
 
 playlistRouter.route('/')
-   .get(getAll)
+   .get(verifyJWT, getAll)
 
 playlistRouter.route('/create')
-    .post(createPlaylist)
+    .post(verifyJWT, createPlaylist)
+
+playlistRouter.route('/:id/changeToShared')   
+    .put(verifyJWT, playlistToShared) 
 
 playlistRouter.route('/:id/remove')
-    .post(removePlaylist)    
+    .delete(verifyJWT, removePlaylist)    
 
 playlistRouter.route('/:id/tracks')    
-    .get(getPlaylistWithTracks)
+    .get(verifyJWT, getPlaylistWithTracks)
+
+playlistRouter.route('/:id/shared')   
+    .get(getPlaylistShared) 
+
+   
 
 module.exports = playlistRouter;

@@ -7,7 +7,7 @@ const getMainTracks = async (req, res) => {
     const config = await getConfig();
 
     const { data } = await axios.get(
-      "https://api.spotify.com/v1/search?q=imaginedragons&type=track&limit=10",
+      "https://api.spotify.com/v1/search?q=coldplay&type=track&limit=15",
       config
     );
 
